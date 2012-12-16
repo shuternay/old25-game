@@ -12,6 +12,7 @@ package
 		public var level:int;
 		public var g:Array = new Array;
 		public var vCrds:Array = new Array;
+		public var crashCrds:Array = new Array;
 		public var from:int;
 		public var to:int;
 		public var curFrom:int;
@@ -19,6 +20,7 @@ package
 		public var gView:Sprite = new Sprite();
 		public var edges:Array = new Array();
 		public var vertexes:Array = new Array();
+		public var crahes:Array = new Array();
 		public var fc:FatherChristmas;
 		public var sign:Sprite = new Sprite();
 		public static var INF:int = 32000;
@@ -46,15 +48,15 @@ package
 			switch (level)
 			{
 				case 1: 
-					vCrds.push({x: 0, y: 0}); //0
-					vCrds.push({x: 100, y: 0}); //1
-					vCrds.push({x: 200, y: 50}); //2
-					vCrds.push({x: 30, y: 150}); //3
-					vCrds.push({x: 100, y: 100}); //4
-					vCrds.push({x: 100, y: 300}); //5
-					vCrds.push({x: 150, y: 230}); //6
-					vCrds.push({x: 250, y: 200}); //7
-					vCrds.push({x: 250, y: 300}); //8
+					vCrds.push({x: 0, y: 0, type: 0}); //0
+					vCrds.push({x: 100, y: 0, type: 0}); //1
+					vCrds.push({x: 200, y: 50, type: 0}); //2
+					vCrds.push({x: 30, y: 150, type: 0}); //3
+					vCrds.push({x: 100, y: 100, type: 0}); //4
+					vCrds.push({x: 100, y: 300, type: 0}); //5
+					vCrds.push({x: 150, y: 230, type: 0}); //6
+					vCrds.push({x: 250, y: 200, type: 0}); //7
+					vCrds.push({x: 250, y: 300, type: 0}); //8
 					for (var i:int = 0; i < 9; i++)
 					{
 						g[i] = new Array;
@@ -93,74 +95,95 @@ package
 			graphics.clear();
 			edges = [];
 			vertexes = [];
+			crahes = [];
 			while (numChildren)
 				removeChildAt(0);
 			
-			for (var i:int = 0; i < g.length; i++) 
+			for (var i:int = 0; i < g.length; i++)
 				for (var j:int = 0; j < g[i].length; j++)
 					if (g[i][j] != -1)
 						edges.push(new Edge(i, vCrds[i].x, vCrds[i].y, j, vCrds[j].x, vCrds[j].y));
 			
-			for (var k:int = 0; k < vCrds.length; k++) 
+			for (var k:int = 0; k < vCrds.length; k++)
 			{
-				var curPt:Sprite = new Sprite();
-				if (k <= to) {
-					curPt.graphics.beginFill(0x00ff00);
-					curPt.graphics.drawCircle(vCrds[k].x, vCrds[k].y, 10);
-				}
-				else {
-					curPt.graphics.beginFill(0xffff00);
-					curPt.graphics.drawCircle(vCrds[k].x + 3 * Math.cos(vCrds[k].angle + Math.PI/2), vCrds[k].y + 3 * Math.sin(vCrds[k].angle + Math.PI/2), 5);
+				var curPt:Vertex = new Vertex();
+				curPt.num = k;
+				
+				switch (vCrds[k].type)
+				{
+					case 0: 
+						curPt.graphics.beginFill(0x00ff00);
+						curPt.graphics.drawCircle(0, 0, 10);
+						curPt.x = vCrds[k].x;
+						curPt.y = vCrds[k].y;
+						break;
+					case 1: 
+						curPt.graphics.beginFill(0xffff00);
+						curPt.graphics.drawCircle(0, 0, 5);
+						curPt.x = vCrds[k].x + 3 * Math.cos(vCrds[k].angle + Math.PI / 2);
+						curPt.y = vCrds[k].y + 3 * Math.sin(vCrds[k].angle + Math.PI / 2);
+						break;
 				}
 				vertexes.push(curPt);
+			}
+			
+			for (var l:int = 0; l < crashCrds.length; l++) 
+			{
+				var curPt2:Sprite = new Sprite();
+				curPt2.graphics.beginFill(0xff0000);
+				curPt2.graphics.drawCircle(crashCrds[l].x, crashCrds[l].y, 3);
+				crahes.push(curPt2);
 			}
 			
 			for each (var edge:Edge in edges)
 			{
 				addChild(edge);
-				//edge.addEventListener(MouseEvent.ROLL_OVER, onMouseOverEdge); //FIXME пофиксить моргания
-				//edge.addEventListener(MouseEvent.ROLL_OUT, onMouseOutEdge);
 				edge.addEventListener(MouseEvent.CLICK, onClickEdge);
 			}
 			
 			for each (var vertex:Sprite in vertexes)
 			{
 				addChild(vertex);
-				//edge.addEventListener(MouseEvent.ROLL_OVER, onMouseOverEdge);
-				//edge.addEventListener(MouseEvent.ROLL_OUT, onMouseOutEdge);
-				//edge.addEventListener(MouseEvent.CLICK, onClickEdge);
+				vertex.addEventListener(MouseEvent.CLICK, onClickVertex);
+			}
+			
+			for each (var crash:Sprite in crahes)
+			{
+				addChild(crash);
 			}
 			
 			addChild(fc);
 			fc.timer.start();
 		}
 		
-		public function onMouseOverEdge(e:MouseEvent):void
+		private function onClickVertex(e:MouseEvent):void
 		{
-			var curEdge:Edge = e.currentTarget as Edge;
-			if (!curEdge.signed)
+			if (Game.THIS.curAb == 2)
 			{
-				curEdge.signed = 1;
-				sign.x = e.localX;
-				sign.y = e.localY;
-				addChild(sign);
-			}
-		}
-		
-		public function onMouseOutEdge(e:MouseEvent):void
-		{
-			var curEdge:Edge = e.currentTarget as Edge;
-			if (curEdge.signed)
-			{
-				curEdge.signed = 0;
-				removeChild(sign);
+				var curVert:Vertex = e.currentTarget as Vertex;
+				
+				crashCrds.push({x: curVert.x, y: curVert.y, type: 2});
+				drawGView();
+				
+				for (var i:int = 0; i < g.length; i++) 
+				{
+					if (g[i][curVert.num] != -1)
+					{
+						g[i][curVert.num] *= 1.2;
+						fc.len *= 1.2;
+						fc.pos *= 1.2;
+					}
+				}
 			}
 		}
 		
 		private function onClickEdge(e:MouseEvent):void
 		{
-			var curEdge:Edge = e.currentTarget as Edge;
-			insertVertex(curEdge, e.localX, e.localY);
+			if (Game.THIS.curAb == 1)
+			{
+				var curEdge:Edge = e.currentTarget as Edge;
+				insertVertex(curEdge, e.localX, e.localY);
+			}
 		}
 		
 		public function insertVertex(edge:Edge, curX:Number, curY:Number):void
@@ -172,11 +195,11 @@ package
 			
 			var dist:Number = (vx1 * vy2 - vx2 * vy1) / edge.len;
 			
-			curX += dist * Math.cos(edge.angle - Math.PI/2);
-			curY += dist * Math.sin(edge.angle - Math.PI/2);
+			curX += dist * Math.cos(edge.angle - Math.PI / 2);
+			curY += dist * Math.sin(edge.angle - Math.PI / 2);
 			
-			vCrds.push({x: curX, y: curY, angle:edge.angle});
-			vCrds.push({x: curX, y: curY, angle:edge.angle});
+			vCrds.push({x: curX, y: curY, angle: edge.angle, type: 1});
+			vCrds.push({x: curX, y: curY, angle: edge.angle, type: 1});
 			
 			for each (var v:Array in g)
 			{
@@ -200,7 +223,17 @@ package
 			
 			if (fc.curFrom == edge.from && fc.curTo == edge.to)
 			{
-				fc.curTo = n - 2;
+				if (fc.pos < g[edge.from][n - 2])
+				{
+					fc.len = g[edge.from][n - 2];
+					fc.curTo = n - 2;
+				}
+				else
+				{
+					fc.len = g[n - 1][edge.to];
+					fc.pos -= g[edge.from][n - 2];
+					fc.curFrom = n - 1;
+				}
 			}
 			
 			drawGView();

@@ -63,7 +63,7 @@ package
 				}
 			}
 			
-			speed *= 1.01;
+			speed *= 1.005;
 			
 			Game.THIS.timeLeft = (distLeft - pos) / speed / 25;
 		}

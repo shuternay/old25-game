@@ -29,7 +29,7 @@ package
 					
 					tf.text = "Hit me!";
 					tf.x = 380;
-					tf.y = 292;
+					tf.y = 291;
 					addChild(tf);
 					tf.mouseEnabled = false;
 					this.addEventListener(MouseEvent.CLICK, onClick0);
