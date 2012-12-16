@@ -110,7 +110,7 @@ package
 				}
 				else {
 					curPt.graphics.beginFill(0xffff00);
-					curPt.graphics.drawCircle(vCrds[k].x, vCrds[k].y, 5);
+					curPt.graphics.drawCircle(vCrds[k].x + 3 * Math.cos(vCrds[k].angle + Math.PI/2), vCrds[k].y + 3 * Math.sin(vCrds[k].angle + Math.PI/2), 5);
 				}
 				vertexes.push(curPt);
 			}
@@ -161,13 +161,22 @@ package
 		{
 			var curEdge:Edge = e.currentTarget as Edge;
 			insertVertex(curEdge, e.localX, e.localY);
-			trace("a");
 		}
 		
 		public function insertVertex(edge:Edge, curX:Number, curY:Number):void
 		{
-			vCrds.push({x: curX, y: curY});
-			vCrds.push({x: curX, y: curY});
+			var vx1:Number = edge.toX - edge.fromX;
+			var vy1:Number = edge.toY - edge.fromY;
+			var vx2:Number = curX - edge.fromX;
+			var vy2:Number = curY - edge.fromY;
+			
+			var dist:Number = (vx1 * vy2 - vx2 * vy1) / edge.len;
+			
+			curX += dist * Math.cos(edge.angle - Math.PI/2);
+			curY += dist * Math.sin(edge.angle - Math.PI/2);
+			
+			vCrds.push({x: curX, y: curY, angle:edge.angle});
+			vCrds.push({x: curX, y: curY, angle:edge.angle});
 			
 			for each (var v:Array in g)
 			{
@@ -185,7 +194,7 @@ package
 			
 			g[edge.from][edge.to] = -1;
 			g[edge.from][n - 2] /*= g[n - 2][edge.from]*/ = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, curX, curY);
-			g[n - 2][n - 1] /*= g[n - 1][n - 2]*/ = 10; //TODO
+			g[n - 2][n - 1] /*= g[n - 1][n - 2]*/ = 40; //TODO
 			/*g[edge.to][n - 1] =*/
 			g[n - 1][edge.to] = geomDist(vCrds[edge.to].x, vCrds[edge.to].y, curX, curY);
 			
@@ -197,15 +206,12 @@ package
 			drawGView();
 		}
 		
-		public function findShortestWay(from:int, _to:int):Number
+		public function findShortestWay(_from:int, _to:int):Number
 		{
 			var d:Array = new Array();
 			var u:Array = new Array();
 			var p:Array = new Array();
 			var n:int = g.length;
-			
-			if (from == 6)
-				trace("a");
 			
 			for (var i:int = 0; i < n; i++)
 			{
@@ -213,7 +219,7 @@ package
 				u.push(false);
 				p.push(0);
 			}
-			d[from] = 0;
+			d[_from] = 0;
 			
 			for (i = 0; i < n; i++)
 			{
@@ -240,11 +246,11 @@ package
 			}
 			
 			i = _to;
-			while (p[i] != from)
+			while (p[i] != _from)
 				i = p[i];
 			curTo = i;
 			
-			return d[to];
+			return d[_to];
 		}
 	
 	}

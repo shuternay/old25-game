@@ -35,8 +35,8 @@ package
 			graphics.moveTo(fromX, fromY);
 			graphics.lineTo(toX, toY);
 			graphics.lineStyle(0, 0, 0);
-			graphics.lineTo(toX + 5 * Math.cos(angle + Math.PI / 2), toY + 5 * Math.sin(angle + Math.PI / 2));
-			graphics.lineTo(fromX + 5 * Math.cos(angle + Math.PI / 2), fromY + 5 * Math.sin(angle + Math.PI / 2));
+			graphics.lineTo(toX + 7 * Math.cos(angle + Math.PI / 2), toY + 7 * Math.sin(angle + Math.PI / 2));
+			graphics.lineTo(fromX + 7 * Math.cos(angle + Math.PI / 2), fromY + 7 * Math.sin(angle + Math.PI / 2));
 			graphics.lineTo(fromX, fromY);
 		}
 		

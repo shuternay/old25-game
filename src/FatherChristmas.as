@@ -24,6 +24,7 @@ package
 		{
 			from = _from;
 			to = _to;
+			curTo = from;
 			graphics.beginFill(0xff0000);
 			graphics.drawCircle(0, 0, 15);
 			graphics.endFill();
@@ -40,6 +41,7 @@ package
 			pos = 0;
 			timer.start();
 			timer.addEventListener(TimerEvent.TIMER, onTick);
+
 		}
 		
 		private function onTick(e:TimerEvent):void
@@ -51,14 +53,19 @@ package
 			{
 				if (curTo == to)
 				{
-					trace("epicWin!!!");
 					timer.stop();
+					Main.THIS.showSmth();
 				}
-				timer.reset();
-				nextMove();
+				else
+				{
+					timer.stop();
+					nextMove();
+				}
 			}
 			
-			Game.THIS.timeLeft = (distLeft - pos)/speed/25;
+			speed *= 1.01;
+			
+			Game.THIS.timeLeft = (distLeft - pos) / speed / 25;
 		}
 	
 	}

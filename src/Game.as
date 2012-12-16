@@ -26,6 +26,7 @@ package
 			graph.y = 30;
 			addChild(graph);
 			
+			timeLeftTF.mouseEnabled = false;
 			tools.addChild(timeLeftTF);
 			tools.x = 600;
 			addChild(tools);
