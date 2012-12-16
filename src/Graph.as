@@ -14,18 +14,31 @@ package
 		public var vCrds:Array = new Array;
 		public var from:int;
 		public var to:int;
+		public var curFrom:int;
+		public var curTo:int;
 		public var gView:Sprite = new Sprite();
 		public var edges:Array = new Array();
+		public var vertexes:Array = new Array();
+		public var fc:FatherChristmas;
 		public var sign:Sprite = new Sprite();
+		public static var INF:int = 32000;
+		public static var THIS:Graph;
 		
 		public function Graph(_lvl:int)
 		{
+			THIS = this;
+			
 			level = _lvl;
 			init();
+			
+			fc = new FatherChristmas(from, to);
+			
 			drawGView();
+			
 			sign.graphics.beginFill(0x0000ff);
 			sign.graphics.drawCircle(0, 0, 10);
 			sign.graphics.endFill();
+		
 		}
 		
 		public function init():void
@@ -76,38 +89,51 @@ package
 		
 		public function drawGView():void
 		{
+			fc.timer.stop();
 			graphics.clear();
 			edges = [];
+			vertexes = [];
 			while (numChildren)
 				removeChildAt(0);
 			
-			for (var i:int = 0; i < g.length; i++)
-			{
+			for (var i:int = 0; i < g.length; i++) 
 				for (var j:int = 0; j < g[i].length; j++)
-				{
 					if (g[i][j] != -1)
-					{
-						/*gView.graphics.lineStyle(3, 0xff0000);
-						   gView.graphics.moveTo(vCrds[i].x + 30, vCrds[i].y + 30);
-						 gView.graphics.lineTo(vCrds[j].x + 30, vCrds[j].y + 30);*/
-						edges.push(new Edge(i, vCrds[i].x + 30, vCrds[i].y + 30, j, vCrds[j].x + 30, vCrds[j].y + 30));
-						graphics.beginFill(0x00ff00);
-						graphics.drawCircle(vCrds[i].x + 30, vCrds[i].y + 30, 10);
-						graphics.drawCircle(vCrds[j].x + 30, vCrds[j].y + 30, 10);
-					}
+						edges.push(new Edge(i, vCrds[i].x, vCrds[i].y, j, vCrds[j].x, vCrds[j].y));
+			
+			for (var k:int = 0; k < vCrds.length; k++) 
+			{
+				var curPt:Sprite = new Sprite();
+				if (k <= to) {
+					curPt.graphics.beginFill(0x00ff00);
+					curPt.graphics.drawCircle(vCrds[k].x, vCrds[k].y, 10);
 				}
+				else {
+					curPt.graphics.beginFill(0xffff00);
+					curPt.graphics.drawCircle(vCrds[k].x, vCrds[k].y, 5);
+				}
+				vertexes.push(curPt);
 			}
+			
 			for each (var edge:Edge in edges)
 			{
 				addChild(edge);
-				edge.addEventListener(MouseEvent.ROLL_OVER, onMouseOverEdge);//FIXME пофиксить моргания
-				edge.addEventListener(MouseEvent.ROLL_OUT, onMouseOutEdge);
+				//edge.addEventListener(MouseEvent.ROLL_OVER, onMouseOverEdge); //FIXME пофиксить моргания
+				//edge.addEventListener(MouseEvent.ROLL_OUT, onMouseOutEdge);
 				edge.addEventListener(MouseEvent.CLICK, onClickEdge);
 			}
-		
+			
+			for each (var vertex:Sprite in vertexes)
+			{
+				addChild(vertex);
+				//edge.addEventListener(MouseEvent.ROLL_OVER, onMouseOverEdge);
+				//edge.addEventListener(MouseEvent.ROLL_OUT, onMouseOutEdge);
+				//edge.addEventListener(MouseEvent.CLICK, onClickEdge);
+			}
+			
+			addChild(fc);
+			fc.timer.start();
 		}
-		
-		
 		
 		public function onMouseOverEdge(e:MouseEvent):void
 		{
@@ -121,12 +147,9 @@ package
 			}
 		}
 		
-		public function onMouseOutEdge(e:MouseEvent):void 
+		public function onMouseOutEdge(e:MouseEvent):void
 		{
 			var curEdge:Edge = e.currentTarget as Edge;
-			/*sign.x = e.localX;
-			   sign.y = e.localY;
-			 addChild(sign);*/
 			if (curEdge.signed)
 			{
 				curEdge.signed = 0;
@@ -134,20 +157,19 @@ package
 			}
 		}
 		
-		private function onClickEdge(e:MouseEvent):void 
+		private function onClickEdge(e:MouseEvent):void
 		{
 			var curEdge:Edge = e.currentTarget as Edge;
 			insertVertex(curEdge, e.localX, e.localY);
+			trace("a");
 		}
 		
 		public function insertVertex(edge:Edge, curX:Number, curY:Number):void
 		{
-			curX -= 30;
-			curY -= 30;
-			vCrds.push( { x:curX, y:curY } );
-			vCrds.push( { x:curX, y:curY } );
+			vCrds.push({x: curX, y: curY});
+			vCrds.push({x: curX, y: curY});
 			
-			for each(var v:Array in g)
+			for each (var v:Array in g)
 			{
 				v.push(-1);
 				v.push(-1);
@@ -155,19 +177,76 @@ package
 			g.push(new Array());
 			g.push(new Array());
 			var n:int = g.length;
-			for (var i:int = 0; i < n; i++) 
+			for (var i:int = 0; i < n; i++)
 			{
 				g[n - 2][i] = -1;
 				g[n - 1][i] = -1;
 			}
 			
-			g[edge.from][edge.to] = g[edge.to][edge.from] = -1;
-			g[edge.from][n-2] = g[n-2][edge.from] = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, curX, curY);
-			g[edge.to][n - 1] = g[n - 1][edge.to] = geomDist(vCrds[edge.to].x, vCrds[edge.to].y, curX, curY);
-			g[n - 2][n - 1] = g[n - 1][n - 2] = 10; //TODO
+			g[edge.from][edge.to] = -1;
+			g[edge.from][n - 2] /*= g[n - 2][edge.from]*/ = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, curX, curY);
+			g[n - 2][n - 1] /*= g[n - 1][n - 2]*/ = 10; //TODO
+			/*g[edge.to][n - 1] =*/
+			g[n - 1][edge.to] = geomDist(vCrds[edge.to].x, vCrds[edge.to].y, curX, curY);
+			
+			if (fc.curFrom == edge.from && fc.curTo == edge.to)
+			{
+				fc.curTo = n - 2;
+			}
 			
 			drawGView();
 		}
+		
+		public function findShortestWay(from:int, _to:int):Number
+		{
+			var d:Array = new Array();
+			var u:Array = new Array();
+			var p:Array = new Array();
+			var n:int = g.length;
+			
+			if (from == 6)
+				trace("a");
+			
+			for (var i:int = 0; i < n; i++)
+			{
+				d.push(INF);
+				u.push(false);
+				p.push(0);
+			}
+			d[from] = 0;
+			
+			for (i = 0; i < n; i++)
+			{
+				var v:int = -1;
+				for (var j:int = 0; j < n; j++)
+					if (!u[j] && (v == -1 || d[j] < d[v]))
+						v = j;
+				
+				if (d[v] == INF)
+					break;
+				u[v] = true;
+				
+				for (j = 0; j < n; ++j)
+					if (g[v][j] != -1)
+					{
+						var to:int = j;
+						var len:Number = g[v][j];
+						if (d[v] + len < d[to])
+						{
+							d[to] = d[v] + len;
+							p[to] = v;
+						}
+					}
+			}
+			
+			i = _to;
+			while (p[i] != from)
+				i = p[i];
+			curTo = i;
+			
+			return d[to];
+		}
+	
 	}
 
 }
