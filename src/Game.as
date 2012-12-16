@@ -20,7 +20,7 @@ package
 		public var snwRmvBtn:AbBtn;
 		public var crashBtn:AbBtn;
 		public var curAb:int = -1;
-		public var timer:Timer = new Timer(1000, 25);
+		public var timer:Timer = new Timer(1000, 35);
 		public static var THIS:Game;
 		
 		public function Game(_lvl:int)
@@ -29,9 +29,11 @@ package
 			
 			level = _lvl;
 			
+			[Embed(source = "../res/map.png")] 
+			var pic: Class;
+			addChild(new pic);
+			
 			graph = new Graph(level);
-			graph.x = 30;
-			graph.y = 30;
 			addChild(graph);
 			
 			timeLeftTF.mouseEnabled = false;
@@ -53,7 +55,7 @@ package
 			timer.start();
 			timer.addEventListener(TimerEvent.TIMER, onTick);
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, onComplete);
-			timeLeft = 25;
+			timeLeft = 35;
 		}
 		
 		private function onComplete(e:TimerEvent):void 

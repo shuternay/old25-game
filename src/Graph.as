@@ -48,38 +48,55 @@ package
 			switch (level)
 			{
 				case 1: 
-					vCrds.push({x: 0, y: 0, type: 0}); //0
-					vCrds.push({x: 100, y: 0, type: 0}); //1
-					vCrds.push({x: 200, y: 50, type: 0}); //2
-					vCrds.push({x: 30, y: 150, type: 0}); //3
-					vCrds.push({x: 100, y: 100, type: 0}); //4
-					vCrds.push({x: 100, y: 300, type: 0}); //5
-					vCrds.push({x: 150, y: 230, type: 0}); //6
-					vCrds.push({x: 250, y: 200, type: 0}); //7
-					vCrds.push({x: 250, y: 300, type: 0}); //8
-					for (var i:int = 0; i < 9; i++)
+					vCrds.push({x: 440, y: 30, type: 0}); //0
+					vCrds.push({x: 444, y: 240, type: 0}); //1
+					vCrds.push({x: 570, y: 240, type: 0}); //2
+					vCrds.push({x: 570, y: 400, type: 0}); //3
+					vCrds.push({x: 385, y: 530, type: 0}); //4
+					vCrds.push({x: 385, y: 565, type: 0}); //5
+					vCrds.push({x: 385, y: 375, type: 0}); //6
+					vCrds.push({x: 355, y: 375, type: 0}); //7
+					vCrds.push({x: 220, y: 390, type: 0}); //8
+					vCrds.push({x: 115, y: 485, type: 0}); //9
+					vCrds.push({x: 115, y: 565, type: 0}); //10
+					vCrds.push({x: 355, y: 295, type: 0}); //11
+					vCrds.push({x: 115, y: 295, type: 0}); //12
+					vCrds.push({x: 85, y: 565, type: 0}); //13
+					vCrds.push({x: 580, y: 400, type: 0}); //14
+					vCrds.push({x: 580, y: 530, type: 0}); //15
+					vCrds.push({x: 220, y: 485, type: 0}); //16 //A
+					vCrds.push({x: 355, y: 240, type: 0}); //17 //B
+					for (var i:int = 0; i < 18; i++)
 					{
 						g[i] = new Array;
-						for (var j:int = 0; j < 9; j++)
+						for (var j:int = 0; j < 18; j++)
 						{
 							g[i][j] = -1;
 						}
 					}
 					g[0][1] = g[1][0] = geomDist(vCrds[0].x, vCrds[0].y, vCrds[1].x, vCrds[1].y); //0-1
-					g[0][3] = g[3][0] = geomDist(vCrds[0].x, vCrds[0].y, vCrds[3].x, vCrds[3].y); //0-3
-					g[0][4] = g[4][0] = geomDist(vCrds[0].x, vCrds[0].y, vCrds[4].x, vCrds[4].y); //0-4
 					g[1][2] = g[2][1] = geomDist(vCrds[1].x, vCrds[1].y, vCrds[2].x, vCrds[2].y); //1-2
-					g[2][4] = g[4][2] = geomDist(vCrds[2].x, vCrds[2].y, vCrds[4].x, vCrds[4].y); //2-4
-					g[2][7] = g[7][2] = geomDist(vCrds[2].x, vCrds[2].y, vCrds[7].x, vCrds[7].y); //2-7
-					g[3][4] = g[4][3] = geomDist(vCrds[3].x, vCrds[3].y, vCrds[4].x, vCrds[4].y); //3-4
-					g[3][5] = g[5][3] = geomDist(vCrds[3].x, vCrds[3].y, vCrds[5].x, vCrds[5].y); //3-5
+					g[2][3] = g[3][2] = geomDist(vCrds[2].x, vCrds[2].y, vCrds[3].x, vCrds[3].y); //2-4
+					g[3][14] = g[14][3] = geomDist(vCrds[3].x, vCrds[3].y, vCrds[14].x, vCrds[14].y); //3-14
+					g[14][15] = g[15][14] = geomDist(vCrds[14].x, vCrds[14].y, vCrds[15].x, vCrds[15].y); //14-15
+					g[15][4] = g[4][15] = geomDist(vCrds[4].x, vCrds[4].y, vCrds[15].x, vCrds[15].y); //4-15
+					g[4][5] = g[5][4] = geomDist(vCrds[4].x, vCrds[4].y, vCrds[5].x, vCrds[5].y); //4-5
 					g[4][6] = g[6][4] = geomDist(vCrds[4].x, vCrds[4].y, vCrds[6].x, vCrds[6].y); //4-6
-					g[5][6] = g[6][5] = geomDist(vCrds[5].x, vCrds[5].y, vCrds[6].x, vCrds[6].y); //5-6
-					g[5][8] = g[8][5] = geomDist(vCrds[5].x, vCrds[5].y, vCrds[8].x, vCrds[8].y); //5-8
 					g[6][7] = g[7][6] = geomDist(vCrds[6].x, vCrds[6].y, vCrds[7].x, vCrds[7].y); //6-7
+					g[5][10] = g[10][5] = geomDist(vCrds[5].x, vCrds[5].y, vCrds[10].x, vCrds[10].y); //5-10
+					g[10][13] = g[13][10] = geomDist(vCrds[10].x, vCrds[10].y, vCrds[13].x, vCrds[13].y); //10-13
+					g[10][9] = g[9][10] = geomDist(vCrds[10].x, vCrds[10].y, vCrds[9].x, vCrds[9].y); //10-9
+					g[12][9] = g[9][12] = geomDist(vCrds[12].x, vCrds[12].y, vCrds[9].x, vCrds[9].y); //12-9
+					g[12][11] = g[11][12] = geomDist(vCrds[12].x, vCrds[12].y, vCrds[11].x, vCrds[11].y); //12-11
+					g[17][11] = g[11][17] = geomDist(vCrds[17].x, vCrds[17].y, vCrds[11].x, vCrds[11].y); //17-11
+					g[1][17] = g[17][1] = geomDist(vCrds[1].x, vCrds[1].y, vCrds[17].x, vCrds[17].y); //1-17
+					g[7][11] = g[11][7] = geomDist(vCrds[7].x, vCrds[7].y, vCrds[11].x, vCrds[11].y); //7-11
 					g[7][8] = g[8][7] = geomDist(vCrds[7].x, vCrds[7].y, vCrds[8].x, vCrds[8].y); //7-8
+					g[16][8] = g[8][16] = geomDist(vCrds[16].x, vCrds[16].y, vCrds[8].x, vCrds[8].y); //16-8
+					g[16][9] = g[9][16] = geomDist(vCrds[16].x, vCrds[16].y, vCrds[9].x, vCrds[9].y); //16-9
+					
 					from = 0;
-					to = 8;
+					to = 13;
 					break;
 			}
 		}
@@ -127,7 +144,7 @@ package
 				vertexes.push(curPt);
 			}
 			
-			for (var l:int = 0; l < crashCrds.length; l++) 
+			for (var l:int = 0; l < crashCrds.length; l++)
 			{
 				var curPt2:Sprite = new Sprite();
 				curPt2.graphics.beginFill(0xff0000);
@@ -165,14 +182,17 @@ package
 				crashCrds.push({x: curVert.x, y: curVert.y, type: 2});
 				drawGView();
 				
-				for (var i:int = 0; i < g.length; i++) 
+				for (var i:int = 0; i < g.length; i++)
 				{
 					if (g[i][curVert.num] != -1)
 					{
-						g[i][curVert.num] *= 1.2;
-						fc.len *= 1.2;
-						fc.pos *= 1.2;
+						g[i][curVert.num] *= 1.1;
 					}
+				}
+				
+				if (fc.curTo == curVert.num) {
+					fc.len *= 1.1;
+					fc.pos *= 1.1;
 				}
 			}
 		}
@@ -217,7 +237,7 @@ package
 			
 			g[edge.from][edge.to] = -1;
 			g[edge.from][n - 2] /*= g[n - 2][edge.from]*/ = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, curX, curY);
-			g[n - 2][n - 1] /*= g[n - 1][n - 2]*/ = 40; //TODO
+			g[n - 2][n - 1] /*= g[n - 1][n - 2]*/ = 25; //TODO
 			/*g[edge.to][n - 1] =*/
 			g[n - 1][edge.to] = geomDist(vCrds[edge.to].x, vCrds[edge.to].y, curX, curY);
 			

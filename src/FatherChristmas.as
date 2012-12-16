@@ -54,6 +54,7 @@ package
 				if (curTo == to)
 				{
 					timer.stop();
+					Game.THIS.timer.stop();
 					Main.THIS.showSmth(2);
 				}
 				else
