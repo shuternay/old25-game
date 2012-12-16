@@ -54,7 +54,7 @@ package
 				if (curTo == to)
 				{
 					timer.stop();
-					Main.THIS.showSmth();
+					Main.THIS.showSmth(2);
 				}
 				else
 				{
@@ -64,8 +64,6 @@ package
 			}
 			
 			speed *= 1.005;
-			
-			Game.THIS.timeLeft = (distLeft - pos) / speed / 25;
 		}
 	
 	}

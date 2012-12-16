@@ -26,41 +26,41 @@ package
 			
 			THIS = this;
 			
-			showSmth();
+			showSmth(0);
 		}
 		
-		public function showSmth():void
+		public function showSmth(num:int):void
 		{
 			k %= 2;
 			switch(k)
 			{
 				case 0:
-					showFilm();
+					showFilm(num);
 					break;
 				case 1:
-					showGame();
+					showGame(num);
 					break;
 			}
 			
 			k++;
 		}
 		
-		public function showFilm():void
+		public function showFilm(num:int):void
 		{
 			while (numChildren)
 				removeChildAt(0);
 				
-			var flm:Film = new Film(k);
+			var flm:Film = new Film(num);
 			addChild(flm);
 			
 		}
 		
-		public function showGame():void
+		public function showGame(num:int):void
 		{
 			while (numChildren)
 				removeChildAt(0);
 				
-			addChild(new Game(k));
+			addChild(new Game(1));
 		}
 	}
 	

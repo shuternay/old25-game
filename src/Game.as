@@ -1,8 +1,10 @@
-package  
+package
 {
 	import flash.display.Sprite;
+	import flash.events.TimerEvent;
 	import flash.text.TextField;
 	import flash.events.MouseEvent;
+	import flash.utils.Timer;
 	
 	/**
 	 * ...
@@ -18,9 +20,10 @@ package
 		public var snwRmvBtn:AbBtn;
 		public var crashBtn:AbBtn;
 		public var curAb:int = -1;
+		public var timer:Timer = new Timer(1000, 25);
 		public static var THIS:Game;
 		
-		public function Game(_lvl:int) 
+		public function Game(_lvl:int)
 		{
 			THIS = this;
 			
@@ -46,34 +49,48 @@ package
 			
 			tools.x = 600;
 			addChild(tools);
+			
+			timer.start();
+			timer.addEventListener(TimerEvent.TIMER, onTick);
+			timer.addEventListener(TimerEvent.TIMER_COMPLETE, onComplete);
+			timeLeft = 25;
 		}
 		
-		private function onClick(e:MouseEvent):void 
+		private function onComplete(e:TimerEvent):void 
+		{
+			graph.fc.timer.stop();
+			Main.THIS.showSmth(3);
+		}
+		
+		private function onTick(e:TimerEvent):void 
+		{
+			timeLeft--;
+		}
+		
+		private function onClick(e:MouseEvent):void
 		{
 			switch (e.currentTarget)
 			{
-				case snwRmvBtn:
+				case snwRmvBtn: 
 					curAb = 1;
 					break;
-				case crashBtn:
+				case crashBtn: 
 					curAb = 2;
 					break;
 			}
 		}
 		
-		
-		
-		public function get timeLeft():Number 
+		public function get timeLeft():Number
 		{
 			return _timeLeft;
 		}
 		
-		public function set timeLeft(value:Number):void 
+		public function set timeLeft(value:Number):void
 		{
 			_timeLeft = value;
 			timeLeftTF.text = "Time left: " + value;
 		}
-		
+	
 	}
 
 }

@@ -19,7 +19,7 @@ package
 			num = _num;
 			switch (num)
 			{
-				case 0:
+				case 0: // begin
 					var tf:TextField = new TextField();
 					this.graphics.beginFill(0x00ff00);
 					this.graphics.drawRect(370, 290, 60, 20);
@@ -27,19 +27,62 @@ package
 					this.buttonMode = true;
 					this.useHandCursor = true;
 					
-					tf.text = "Hit me!";
+					tf.text = "Play!";
 					tf.x = 380;
 					tf.y = 291;
 					addChild(tf);
 					tf.mouseEnabled = false;
-					this.addEventListener(MouseEvent.CLICK, onClick0);
+					this.addEventListener(MouseEvent.CLICK, onClick);
 					break;
+				case 2: // you Lose
+					var tf:TextField = new TextField();
+					var tf2:TextField = new TextField();
+					this.graphics.beginFill(0x00ff00);
+					this.graphics.drawRect(370, 290, 60, 20);
+					this.graphics.endFill();
+					this.buttonMode = true;
+					this.useHandCursor = true;
+					
+					tf.text = "Play!";
+					tf.x = 380;
+					tf.y = 291;
+					addChild(tf);
+					tf.mouseEnabled = false;
+					tf2.text = "You Lose!";
+					tf2.x = 380;
+					tf2.y = 270;
+					addChild(tf2);
+					tf2.mouseEnabled = false;
+					this.addEventListener(MouseEvent.CLICK, onClick);
+					break;
+				case 3: // you Win
+					var tf:TextField = new TextField();
+					var tf2:TextField = new TextField();
+					this.graphics.beginFill(0x00ff00);
+					this.graphics.drawRect(370, 290, 60, 20);
+					this.graphics.endFill();
+					this.buttonMode = true;
+					this.useHandCursor = true;
+					
+					tf.text = "Play!";
+					tf.x = 380;
+					tf.y = 291;
+					addChild(tf);
+					tf.mouseEnabled = false;
+					tf2.text = "You Win!";
+					tf2.x = 380;
+					tf2.y = 270;
+					addChild(tf2);
+					tf2.mouseEnabled = false;
+					this.addEventListener(MouseEvent.CLICK, onClick);
+					break;
+					
 			}
 		}
 		
-		private function onClick0(e:MouseEvent):void 
+		private function onClick(e:MouseEvent):void 
 		{
-			Main.THIS.showSmth();
+			Main.THIS.showSmth(1);
 		}
 	
 	}
