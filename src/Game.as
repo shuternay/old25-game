@@ -20,7 +20,7 @@ package
 		public var snwRmvBtn:AbBtn;
 		public var crashBtn:AbBtn;
 		public var curAb:int = -1;
-		public var timer:Timer = new Timer(1000, 35);
+		public var timer:Timer = new Timer(1000, 30);
 		public static var THIS:Game;
 		
 		public function Game(_lvl:int)
@@ -55,7 +55,7 @@ package
 			timer.start();
 			timer.addEventListener(TimerEvent.TIMER, onTick);
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, onComplete);
-			timeLeft = 35;
+			timeLeft = 30;
 		}
 		
 		private function onComplete(e:TimerEvent):void 

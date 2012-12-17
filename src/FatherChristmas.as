@@ -10,13 +10,13 @@ package
 	 */
 	public class FatherChristmas extends Sprite
 	{
-		public var distLeft:Number;
 		public var from:int;
 		public var to:int;
-		public var curFrom:int;
+		public var curFrom:int = 0;
 		public var curTo:int;
 		public var speed:Number = 1;
-		public var len:Number;
+		public var dist:Number;
+		public var weight:Number;
 		public var pos:Number;
 		public var timer:Timer = new Timer(40);
 		
@@ -33,23 +33,32 @@ package
 		
 		public function nextMove():void
 		{
-			distLeft = Graph.THIS.findShortestWay(curTo, to);
-			
+			Graph.THIS.findShortestWay(curTo, to);
 			curFrom = curTo;
 			curTo = Graph.THIS.curTo;
-			len = Graph.THIS.g[curFrom][curTo];
+			dist = Graph.THIS.geomDist(Graph.THIS.vCrds[curFrom].x, Graph.THIS.vCrds[curFrom].y, Graph.THIS.vCrds[curTo].x, Graph.THIS.vCrds[curTo].y);
+			weight = Graph.THIS.g[curFrom][curTo];
 			pos = 0;
 			timer.start();
 			timer.addEventListener(TimerEvent.TIMER, onTick);
-
 		}
 		
 		private function onTick(e:TimerEvent):void
 		{
-			x = Graph.THIS.vCrds[curFrom].x + (Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x) * pos / len;
-			y = Graph.THIS.vCrds[curFrom].y + (Graph.THIS.vCrds[curTo].y - Graph.THIS.vCrds[curFrom].y) * pos / len;
-			pos += speed;
-			if (pos >= len)
+			if (dist)
+			{
+				x = Graph.THIS.vCrds[curFrom].x + (Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x) * pos / dist;
+				y = Graph.THIS.vCrds[curFrom].y + (Graph.THIS.vCrds[curTo].y - Graph.THIS.vCrds[curFrom].y) * pos / dist;
+			}
+			else
+			{
+				x = Graph.THIS.vCrds[curFrom].x;
+				y = Graph.THIS.vCrds[curFrom].y;
+			}
+			
+			trace(x, y, pos, dist, Graph.THIS.vCrds[curFrom].x)
+			pos += speed * dist / weight;
+			if (pos >= dist)
 			{
 				if (curTo == to)
 				{
@@ -64,7 +73,7 @@ package
 				}
 			}
 			
-			speed *= 1.005;
+			speed *= 1.002;
 		}
 	
 	}

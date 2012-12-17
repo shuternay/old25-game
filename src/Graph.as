@@ -22,7 +22,6 @@ package
 		public var vertexes:Array = new Array();
 		public var crahes:Array = new Array();
 		public var fc:FatherChristmas;
-		public var sign:Sprite = new Sprite();
 		public static var INF:int = 32000;
 		public static var THIS:Graph;
 		
@@ -36,11 +35,6 @@ package
 			fc = new FatherChristmas(from, to);
 			
 			drawGView();
-			
-			sign.graphics.beginFill(0x0000ff);
-			sign.graphics.drawCircle(0, 0, 10);
-			sign.graphics.endFill();
-		
 		}
 		
 		public function init():void
@@ -123,33 +117,26 @@ package
 			
 			for (var k:int = 0; k < vCrds.length; k++)
 			{
-				var curPt:Vertex = new Vertex();
-				curPt.num = k;
+				var curV:Vertex = new Vertex(vCrds[k].type);
+				curV.num = k;
 				
 				switch (vCrds[k].type)
 				{
 					case 0: 
-						curPt.graphics.beginFill(0x00ff00);
-						curPt.graphics.drawCircle(0, 0, 10);
-						curPt.x = vCrds[k].x;
-						curPt.y = vCrds[k].y;
+						curV.x = vCrds[k].x;
+						curV.y = vCrds[k].y;
 						break;
 					case 1: 
-						curPt.graphics.beginFill(0xffff00);
-						curPt.graphics.drawCircle(0, 0, 5);
-						curPt.x = vCrds[k].x + 3 * Math.cos(vCrds[k].angle + Math.PI / 2);
-						curPt.y = vCrds[k].y + 3 * Math.sin(vCrds[k].angle + Math.PI / 2);
+						curV.x = vCrds[k].x;
+						curV.y = vCrds[k].y;
+						break;
+					case 2: 
+						curV.x = vCrds[k].x + 3 * Math.cos(vCrds[k].angle + Math.PI / 2);
+						curV.y = vCrds[k].y + 3 * Math.sin(vCrds[k].angle + Math.PI / 2);
 						break;
 				}
-				vertexes.push(curPt);
-			}
-			
-			for (var l:int = 0; l < crashCrds.length; l++)
-			{
-				var curPt2:Sprite = new Sprite();
-				curPt2.graphics.beginFill(0xff0000);
-				curPt2.graphics.drawCircle(crashCrds[l].x, crashCrds[l].y, 3);
-				crahes.push(curPt2);
+				addChild(curV);
+				vertexes.push(curV);
 			}
 			
 			for each (var edge:Edge in edges)
@@ -164,35 +151,32 @@ package
 				vertex.addEventListener(MouseEvent.CLICK, onClickVertex);
 			}
 			
-			for each (var crash:Sprite in crahes)
-			{
-				addChild(crash);
-			}
-			
 			addChild(fc);
 			fc.timer.start();
 		}
 		
 		private function onClickVertex(e:MouseEvent):void
 		{
-			if (Game.THIS.curAb == 2)
+			var curVert:Vertex = e.currentTarget as Vertex;
+			//trace (curVert.type, curVert.num);
+			if (Game.THIS.curAb == 2 && curVert.type == 0)
 			{
-				var curVert:Vertex = e.currentTarget as Vertex;
 				
-				crashCrds.push({x: curVert.x, y: curVert.y, type: 2});
+				//crashCrds.push({x: curVert.x, y: curVert.y, type: 2});
+				vCrds[curVert.num].type = 1;
 				drawGView();
 				
 				for (var i:int = 0; i < g.length; i++)
 				{
 					if (g[i][curVert.num] != -1)
 					{
-						g[i][curVert.num] *= 1.1;
+						g[i][curVert.num] *= 1.8;
 					}
 				}
 				
-				if (fc.curTo == curVert.num) {
-					fc.len *= 1.1;
-					fc.pos *= 1.1;
+				if (fc.curTo == curVert.num)
+				{
+					fc.weight *= 1.5;
 				}
 			}
 		}
@@ -218,8 +202,8 @@ package
 			curX += dist * Math.cos(edge.angle - Math.PI / 2);
 			curY += dist * Math.sin(edge.angle - Math.PI / 2);
 			
-			vCrds.push({x: curX, y: curY, angle: edge.angle, type: 1});
-			vCrds.push({x: curX, y: curY, angle: edge.angle, type: 1});
+			vCrds.push({x: curX, y: curY, angle: edge.angle, type: 2});
+			vCrds.push({x: curX+0.0001, y: curY, angle: edge.angle, type: 2});
 			
 			for each (var v:Array in g)
 			{
@@ -236,22 +220,23 @@ package
 			}
 			
 			g[edge.from][edge.to] = -1;
-			g[edge.from][n - 2] /*= g[n - 2][edge.from]*/ = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, curX, curY);
-			g[n - 2][n - 1] /*= g[n - 1][n - 2]*/ = 25; //TODO
-			/*g[edge.to][n - 1] =*/
-			g[n - 1][edge.to] = geomDist(vCrds[edge.to].x, vCrds[edge.to].y, curX, curY);
+			g[edge.from][n - 2] = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, curX, curY) * 1.5;
+			g[n - 2][n - 1] = 25;
+			g[n - 1][edge.to] = geomDist(vCrds[edge.to].x, vCrds[edge.to].y, curX+0.0001, curY);
 			
 			if (fc.curFrom == edge.from && fc.curTo == edge.to)
 			{
-				if (fc.pos < g[edge.from][n - 2])
+				if (fc.pos < g[edge.from][n - 2]) //до пробки
 				{
-					fc.len = g[edge.from][n - 2];
+					fc.weight = g[edge.from][n - 2];
+					fc.dist = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, vCrds[n - 2].x, vCrds[n - 2].y);
 					fc.curTo = n - 2;
 				}
-				else
+				else //после пробки
 				{
-					fc.len = g[n - 1][edge.to];
-					fc.pos -= g[edge.from][n - 2];
+					fc.weight = g[n - 1][edge.to];
+					fc.dist = geomDist(vCrds[n - 1].x, vCrds[n - 1].y, vCrds[edge.to].x, vCrds[edge.to].y);
+					fc.pos -= geomDist(vCrds[edge.from].x, vCrds[edge.from].y, vCrds[n - 2].x, vCrds[n - 2].y);
 					fc.curFrom = n - 1;
 				}
 			}
