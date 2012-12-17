@@ -62,7 +62,7 @@ package
 					vCrds.push({x: 355, y: 240, type: 0}); //17 //B
 					for (var i:int = 0; i < 18; i++)
 					{
-						g[i] = new Array;
+						g[i] = new Array();
 						for (var j:int = 0; j < 18; j++)
 						{
 							g[i][j] = -1;
@@ -176,7 +176,7 @@ package
 				
 				if (fc.curTo == curVert.num)
 				{
-					fc.weight *= 1.5;
+					fc.weight *= 1.8;
 				}
 			}
 		}

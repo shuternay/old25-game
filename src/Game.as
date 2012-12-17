@@ -1,9 +1,12 @@
 package
 {
 	import flash.display.Sprite;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.text.TextField;
-	import flash.events.MouseEvent;
+	import flash.text.TextFormat;
+	import flash.ui.Keyboard;
 	import flash.utils.Timer;
 	
 	/**
@@ -17,10 +20,11 @@ package
 		public var level:int;
 		private var _timeLeft:Number;
 		public var timeLeftTF:TextField = new TextField();
+		public var tff:TextFormat = new TextFormat();
 		public var snwRmvBtn:AbBtn;
 		public var crashBtn:AbBtn;
-		public var curAb:int = -1;
-		public var timer:Timer = new Timer(1000, 30);
+		public var curAb:int = 1;
+		public var timer:Timer = new Timer(1000, 60);
 		public static var THIS:Game;
 		
 		public function Game(_lvl:int)
@@ -37,17 +41,23 @@ package
 			addChild(graph);
 			
 			timeLeftTF.mouseEnabled = false;
+			tff.size = 30;
+			tff.color = 0xff0000;
+			timeLeftTF.setTextFormat(tff);
+			timeLeftTF.width = 200;
 			tools.addChild(timeLeftTF);
 			
-			snwRmvBtn = new AbBtn("Snow removal", 0xffff00);
-			snwRmvBtn.y = 40;
+			snwRmvBtn = new AbBtn("Snow (Z)", 1);
+			snwRmvBtn.y = 50;
 			tools.addChild(snwRmvBtn);
 			snwRmvBtn.addEventListener(MouseEvent.CLICK, onClick);
 			
-			crashBtn = new AbBtn("Crash", 0xff0000);
-			crashBtn.y = 90;
+			crashBtn = new AbBtn("Crash (X)", 2);
+			crashBtn.y = 100;
 			tools.addChild(crashBtn);
 			crashBtn.addEventListener(MouseEvent.CLICK, onClick);
+			
+			Main.THIS.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			
 			tools.x = 600;
 			addChild(tools);
@@ -55,7 +65,19 @@ package
 			timer.start();
 			timer.addEventListener(TimerEvent.TIMER, onTick);
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, onComplete);
-			timeLeft = 30;
+			timeLeft = 60;
+		}
+		
+		private function keyDown(e:KeyboardEvent):void 
+		{
+			switch (e.keyCode) {
+				case Keyboard.Z:
+					curAb = 1;
+					break;
+				case Keyboard.X:
+					curAb = 2;
+					break;
+			}
 		}
 		
 		private function onComplete(e:TimerEvent):void 
@@ -91,6 +113,7 @@ package
 		{
 			_timeLeft = value;
 			timeLeftTF.text = "Time left: " + value;
+			timeLeftTF.setTextFormat(tff);
 		}
 	
 	}

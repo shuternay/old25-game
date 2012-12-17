@@ -1,8 +1,10 @@
 package
 {
+	import flash.display.Bitmap;
+	import flash.display.PixelSnapping;
 	import flash.display.Sprite;
-	import flash.utils.Timer;
 	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	
 	/**
 	 * ...
@@ -18,6 +20,7 @@ package
 		public var dist:Number;
 		public var weight:Number;
 		public var pos:Number;
+		public var pic:Bitmap;
 		public var timer:Timer = new Timer(40);
 		
 		public function FatherChristmas(_from:int, _to:int)
@@ -25,9 +28,13 @@ package
 			from = _from;
 			to = _to;
 			curTo = from;
-			graphics.beginFill(0xff0000);
-			graphics.drawCircle(0, 0, 15);
-			graphics.endFill();
+			[Embed(source="../res/dedmoroz.png")]
+			var _pic:Class;
+			pic = new _pic() as Bitmap;
+			pic.x = -16;
+			pic.y = -16;
+			pic.pixelSnapping = PixelSnapping.ALWAYS;
+			addChild(pic);
 			nextMove();
 		}
 		
@@ -45,6 +52,8 @@ package
 		
 		private function onTick(e:TimerEvent):void
 		{
+			if (dist > 0.5) rotation = Math.atan2(Graph.THIS.vCrds[curTo].y - Graph.THIS.vCrds[curFrom].y, Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x)*180/Math.PI;
+			trace(Math.atan2(Graph.THIS.vCrds[curTo].y - Graph.THIS.vCrds[curFrom].y, Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x)*180/Math.PI);
 			if (dist)
 			{
 				x = Graph.THIS.vCrds[curFrom].x + (Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x) * pos / dist;
@@ -56,7 +65,6 @@ package
 				y = Graph.THIS.vCrds[curFrom].y;
 			}
 			
-			trace(x, y, pos, dist, Graph.THIS.vCrds[curFrom].x)
 			pos += speed * dist / weight;
 			if (pos >= dist)
 			{
@@ -74,7 +82,7 @@ package
 			}
 			
 			speed *= 1.002;
-		}
+					}
 	
 	}
 
