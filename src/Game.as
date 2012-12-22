@@ -21,10 +21,15 @@ package
 		private var _timeLeft:Number;
 		public var timeLeftTF:TextField = new TextField();
 		public var tff:TextFormat = new TextFormat();
-		public var snwRmvBtn:AbBtn;
-		public var crashBtn:AbBtn;
+		public var snwRem:int = 10;
+		public var crshRem:int = 5;
+		public var snwBtn:AbBtn;
+		public var crshBtn:AbBtn;
 		public var curAb:int = 1;
-		public var timer:Timer = new Timer(1000, 60);
+		
+		public static var TIME_NEED:Number = 300;
+		
+		public var timer:Timer = new Timer(1000, TIME_NEED);
 		public static var THIS:Game;
 		
 		public function Game(_lvl:int)
@@ -33,8 +38,8 @@ package
 			
 			level = _lvl;
 			
-			[Embed(source = "../res/map.png")] 
-			var pic: Class;
+			[Embed(source="../res/map.png")]
+			var pic:Class;
 			addChild(new pic);
 			
 			graph = new Graph(level);
@@ -47,15 +52,19 @@ package
 			timeLeftTF.width = 200;
 			tools.addChild(timeLeftTF);
 			
-			snwRmvBtn = new AbBtn("Snow (Z)", 1);
-			snwRmvBtn.y = 50;
-			tools.addChild(snwRmvBtn);
-			snwRmvBtn.addEventListener(MouseEvent.CLICK, onClick);
+			snwBtn = new AbBtn(1);
+			snwBtn.setText("Snow (Z): " + snwRem);
+			snwBtn.x = 10;
+			snwBtn.y = 50;
+			tools.addChild(snwBtn);
+			snwBtn.addEventListener(MouseEvent.CLICK, onClick);
 			
-			crashBtn = new AbBtn("Crash (X)", 2);
-			crashBtn.y = 100;
-			tools.addChild(crashBtn);
-			crashBtn.addEventListener(MouseEvent.CLICK, onClick);
+			crshBtn = new AbBtn(2);
+			crshBtn.setText("Crash (X): " + crshRem);
+			crshBtn.x = 10;
+			crshBtn.y = 100;
+			tools.addChild(crshBtn);
+			crshBtn.addEventListener(MouseEvent.CLICK, onClick);
 			
 			Main.THIS.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			
@@ -65,28 +74,65 @@ package
 			timer.start();
 			timer.addEventListener(TimerEvent.TIMER, onTick);
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, onComplete);
-			timeLeft = 60;
+			timeLeft = TIME_NEED;
 		}
 		
-		private function keyDown(e:KeyboardEvent):void 
+		public function useSnw():Boolean
 		{
-			switch (e.keyCode) {
-				case Keyboard.Z:
-					curAb = 1;
-					break;
-				case Keyboard.X:
-					curAb = 2;
-					break;
+			if (snwRem && curAb == 1)
+			{
+				snwRem--;
+				snwBtn.setText("Snow (Z): " + snwRem);
+				return true;
 			}
+			else
+				return false;
 		}
 		
-		private function onComplete(e:TimerEvent):void 
+		public function useCrsh():Boolean
+		{
+			if (crshRem && curAb == 2)
+			{
+				crshRem--;
+				crshBtn.setText("Snow (Z): " + crshRem);
+				return true;
+			}
+			else
+				return false;
+		}
+		
+		public function win():void
 		{
 			graph.fc.timer.stop();
 			Main.THIS.showSmth(3);
 		}
 		
-		private function onTick(e:TimerEvent):void 
+		public function lose():void
+		{
+			graph.fc.timer.stop();
+			timer.stop();
+			Main.THIS.showSmth(2);
+		}
+		
+		private function keyDown(e:KeyboardEvent):void
+		{
+			switch (e.keyCode)
+			{
+				case Keyboard.Z: 
+					curAb = 1;
+					break;
+				case Keyboard.X: 
+					curAb = 2;
+					break;
+			}
+		}
+		
+		private function onComplete(e:TimerEvent):void
+		{
+			win();
+		}
+		
+		private function onTick(e:TimerEvent):void
 		{
 			timeLeft--;
 		}
@@ -95,10 +141,10 @@ package
 		{
 			switch (e.currentTarget)
 			{
-				case snwRmvBtn: 
+				case snwBtn: 
 					curAb = 1;
 					break;
-				case crashBtn: 
+				case crshBtn: 
 					curAb = 2;
 					break;
 			}
@@ -115,7 +161,6 @@ package
 			timeLeftTF.text = "Time left: " + value;
 			timeLeftTF.setTextFormat(tff);
 		}
-	
 	}
 
 }

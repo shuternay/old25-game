@@ -1,4 +1,4 @@
-package 
+package
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -8,18 +8,21 @@ package
 	 * ...
 	 * @author Shuternay
 	 */
-	public class Main extends Sprite 
+	public class Main extends Sprite
 	{
 		public var game:Game;
 		public var k:int = 0;
 		public static var THIS:Main;
-		public function Main():void 
+		
+		public function Main():void
 		{
-			if (stage) init();
-			else addEventListener(Event.ADDED_TO_STAGE, init);
+			if (stage)
+				init();
+			else
+				addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 		
-		private function init(e:Event = null):void 
+		private function init(e:Event = null):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			// entry point
@@ -31,13 +34,17 @@ package
 		
 		public function showSmth(num:int):void
 		{
+			
+			while (numChildren)
+				removeChildAt(0);
+			
 			k %= 2;
-			switch(k)
+			switch (k)
 			{
-				case 0:
+				case 0: 
 					showFilm(num);
 					break;
-				case 1:
+				case 1: 
 					showGame(num);
 					break;
 			}
@@ -47,21 +54,15 @@ package
 		
 		public function showFilm(num:int):void
 		{
-			while (numChildren)
-				removeChildAt(0);
-				
 			var flm:Film = new Film(num);
 			addChild(flm);
-			
+		
 		}
 		
 		public function showGame(num:int):void
 		{
-			while (numChildren)
-				removeChildAt(0);
-				
 			addChild(new Game(1));
 		}
 	}
-	
+
 }

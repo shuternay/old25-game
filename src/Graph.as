@@ -10,6 +10,7 @@ package
 	public class Graph extends Sprite
 	{
 		public var level:int;
+		
 		public var g:Array = new Array;
 		public var vCrds:Array = new Array;
 		public var crashCrds:Array = new Array;
@@ -17,13 +18,19 @@ package
 		public var to:int;
 		public var curFrom:int;
 		public var curTo:int;
+		
 		public var gView:Sprite = new Sprite();
 		public var edges:Array = new Array();
 		public var vertexes:Array = new Array();
 		public var crahes:Array = new Array();
+		
 		public var fc:FatherChristmas;
+		
 		public static var INF:int = 32000;
 		public static var THIS:Graph;
+		public static var CRSH_SLW:Number = 10;
+		public static var SNW_SLW:Number = 5;
+		public static var SNW_DEL:Number = 25;
 		
 		public function Graph(_lvl:int)
 		{
@@ -142,27 +149,25 @@ package
 			for each (var edge:Edge in edges)
 			{
 				addChild(edge);
-				edge.addEventListener(MouseEvent.CLICK, onClickEdge);
+				edge.addEventListener(MouseEvent.CLICK, putSnw);
 			}
 			
 			for each (var vertex:Sprite in vertexes)
 			{
 				addChild(vertex);
-				vertex.addEventListener(MouseEvent.CLICK, onClickVertex);
+				vertex.addEventListener(MouseEvent.CLICK, putCrsh);
 			}
 			
 			addChild(fc);
 			fc.timer.start();
 		}
 		
-		private function onClickVertex(e:MouseEvent):void
+		private function putCrsh(e:MouseEvent):void
 		{
 			var curVert:Vertex = e.currentTarget as Vertex;
-			//trace (curVert.type, curVert.num);
-			if (Game.THIS.curAb == 2 && curVert.type == 0)
+			
+			if (curVert.type == 0 && Game.THIS.useCrsh())
 			{
-				
-				//crashCrds.push({x: curVert.x, y: curVert.y, type: 2});
 				vCrds[curVert.num].type = 1;
 				drawGView();
 				
@@ -170,27 +175,27 @@ package
 				{
 					if (g[i][curVert.num] != -1)
 					{
-						g[i][curVert.num] *= 1.8;
+						g[i][curVert.num] *= CRSH_SLW;
 					}
 				}
 				
 				if (fc.curTo == curVert.num)
 				{
-					fc.weight *= 1.8;
+					fc.weight *= CRSH_SLW;
 				}
 			}
 		}
 		
-		private function onClickEdge(e:MouseEvent):void
+		private function putSnw(e:MouseEvent):void
 		{
-			if (Game.THIS.curAb == 1)
+			if (Game.THIS.useSnw())
 			{
 				var curEdge:Edge = e.currentTarget as Edge;
-				insertVertex(curEdge, e.localX, e.localY);
+				insertSnwVrtx(curEdge, e.localX, e.localY);
 			}
 		}
 		
-		public function insertVertex(edge:Edge, curX:Number, curY:Number):void
+		public function insertSnwVrtx(edge:Edge, curX:Number, curY:Number):void
 		{
 			var vx1:Number = edge.toX - edge.fromX;
 			var vy1:Number = edge.toY - edge.fromY;
@@ -203,7 +208,7 @@ package
 			curY += dist * Math.sin(edge.angle - Math.PI / 2);
 			
 			vCrds.push({x: curX, y: curY, angle: edge.angle, type: 2});
-			vCrds.push({x: curX+0.0001, y: curY, angle: edge.angle, type: 2});
+			vCrds.push({x: curX + 0.0001, y: curY, angle: edge.angle, type: 2});
 			
 			for each (var v:Array in g)
 			{
@@ -219,10 +224,12 @@ package
 				g[n - 1][i] = -1;
 			}
 			
+			var koef:Number = g[edge.from][edge.to] / geomDist(vCrds[edge.from].x, vCrds[edge.from].y, vCrds[edge.to].x, vCrds[edge.to].y);
+			
 			g[edge.from][edge.to] = -1;
-			g[edge.from][n - 2] = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, curX, curY) * 1.5;
-			g[n - 2][n - 1] = 25;
-			g[n - 1][edge.to] = geomDist(vCrds[edge.to].x, vCrds[edge.to].y, curX+0.0001, curY);
+			g[edge.from][n - 2] = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, curX, curY) * SNW_SLW * koef; // = geomDist(vCrds[edge.from].x, vCrds[edge.from].y, curX, curY) * SNW_SLW;
+			g[n - 2][n - 1] = SNW_DEL;
+			g[n - 1][edge.to] = geomDist(vCrds[edge.to].x, vCrds[edge.to].y, curX + 0.0001, curY) * koef;
 			
 			if (fc.curFrom == edge.from && fc.curTo == edge.to)
 			{

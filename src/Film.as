@@ -41,7 +41,7 @@ package
 					tf2.text = "You Lose!";
 					tf2.x = 245;
 					tf2.y = 150;
-					tf2.width = 300;
+					tf2.width = 400;
 					tf2.setTextFormat(tff);
 					addChild(tf2);
 					tf2.mouseEnabled = false;
@@ -50,7 +50,7 @@ package
 					tf2.text = "You Win!";
 					tf2.x = 250;
 					tf2.y = 150;
-					tf2.width = 300;
+					tf2.width = 400;
 					tf2.setTextFormat(tff);
 					addChild(tf2);
 					tf2.mouseEnabled = false;

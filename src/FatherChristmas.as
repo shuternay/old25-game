@@ -20,7 +20,9 @@ package
 		public var dist:Number;
 		public var weight:Number;
 		public var pos:Number;
+		
 		public var pic:Bitmap;
+		
 		public var timer:Timer = new Timer(40);
 		
 		public function FatherChristmas(_from:int, _to:int)
@@ -52,8 +54,9 @@ package
 		
 		private function onTick(e:TimerEvent):void
 		{
-			if (dist > 0.5) rotation = Math.atan2(Graph.THIS.vCrds[curTo].y - Graph.THIS.vCrds[curFrom].y, Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x)*180/Math.PI;
-			trace(Math.atan2(Graph.THIS.vCrds[curTo].y - Graph.THIS.vCrds[curFrom].y, Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x)*180/Math.PI);
+			if (dist > 0.5)
+				rotation = Math.atan2(Graph.THIS.vCrds[curTo].y - Graph.THIS.vCrds[curFrom].y, Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x) * 180 / Math.PI;
+			trace(Math.atan2(Graph.THIS.vCrds[curTo].y - Graph.THIS.vCrds[curFrom].y, Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x) * 180 / Math.PI);
 			if (dist)
 			{
 				x = Graph.THIS.vCrds[curFrom].x + (Graph.THIS.vCrds[curTo].x - Graph.THIS.vCrds[curFrom].x) * pos / dist;
@@ -70,9 +73,7 @@ package
 			{
 				if (curTo == to)
 				{
-					timer.stop();
-					Game.THIS.timer.stop();
-					Main.THIS.showSmth(2);
+					Game.THIS.lose();
 				}
 				else
 				{
@@ -82,7 +83,7 @@ package
 			}
 			
 			speed *= 1.002;
-					}
+		}
 	
 	}
 

@@ -12,24 +12,22 @@ package
 	 */
 	public class AbBtn extends Sprite
 	{
-		public function AbBtn(name:String, num:int)
+		private var tf:TextField = new TextField();
+		private var tff:TextFormat = new TextFormat();
+		
+		public function AbBtn(num:int)
 		{
-			var tf:TextField = new TextField();
-			var tff:TextFormat = new TextFormat();
-			//this.graphics.beginFill(num);
-			//this.graphics.drawRect(0, 0, 40, 40);
-			//this.graphics.endFill();
 			switch (num)
 			{
 				case 1: 
-					[Embed(source="../res/bigSnow.png")]
+					[Embed(source="../res/bigSnow.png")] //FIXME
 					var _pic1:Class;
 					var pic1:Bitmap = new _pic1() as Bitmap;
 					pic1.pixelSnapping = PixelSnapping.ALWAYS;
 					addChild(pic1);
 					break;
 				case 2: 
-					[Embed(source="../res/bigCrash.png")]
+					[Embed(source="../res/bigCrash.png")] //FIXME
 					var _pic2:Class;
 					var pic2:Bitmap = new _pic2() as Bitmap;
 					pic2.pixelSnapping = PixelSnapping.ALWAYS;
@@ -41,14 +39,18 @@ package
 			this.useHandCursor = true;
 			
 			tff.size = 20;
-			tf.text = name;
 			tf.x = 45;
 			tf.y = 0;
 			tf.height = 40;
-			tf.width = 100;
-			tf.setTextFormat(tff);
+			tf.width = 1500;
 			addChild(tf);
 			tf.mouseEnabled = false;
+		}
+		
+		public function setText(name:String):void
+		{
+			tf.text = name;
+			tf.setTextFormat(tff);
 		}
 	}
 }
